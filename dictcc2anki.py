@@ -6,7 +6,7 @@ from anki.importing import TextImporter
 import csv, os, re
 from dictcc import Dict, AVAILABLE_LANGUAGES
 
-collection_path = 'C:/Users/Lorenz/Documents/Anki/Lorenz1/collection.anki2'
+collection_path = 'path/to/your/collection.anki2' #change according to your file path.
 
 
 
@@ -15,6 +15,7 @@ def ensure_unicode(string):
         return string.decode("utf-8")
     return string
 
+#searching the translation of the entered word
 def run(event):
     translation_lb.delete(0, END)
     word = in_word_entry.get()
@@ -40,9 +41,10 @@ def print_translation(output_word):
     translation_lb.insert(END, output_word)
 
 
+#adding the flashcard to anki
 def make_cards(event):
-    card_type = 'Basic (and reversed card)'
-    deck_name = 'Englisch'
+    card_type = 'Basic (and reversed card)' #can be changed to just Basic if you want to learn one directional
+    deck_name = 'Vocabulary' #change for outher deck name
     card_front = str(in_word_entry.get())
     card_back  = str(translation_lb.get(translation_lb.curselection()[0]))
     deck = Collection(collection_path);
@@ -61,18 +63,21 @@ def make_cards(event):
     print("{} <-> {} card was added".format(card_front, card_back))
     in_word_entry.delete(0, END)
 
+
+#guisetup
 window = Tk()
 window.config(bg="WHITE")
-lan = ['de', 'en', 'ro', 'it', 'fr', 'ru', 'bg', 'pt', 'es']
+
+lan = ['de', 'en', 'ro', 'it', 'fr', 'ru', 'bg', 'pt', 'es'] #avaliable languages
 in_word_entry = ttk.Entry(window, width=54)
 in_lan_label = Label(window, text='Input Language')
 out_lan_label = Label(window, text='Output Language')
 in_lan_label.config(bg="WHITE")
 out_lan_label.config(bg="WHITE")
 in_lan_var = StringVar(window)
-in_lan_var.set('en')
+in_lan_var.set('en') #preset input language
 out_lan_var = StringVar(window)
-out_lan_var.set('de')
+out_lan_var.set('de') #preset output language
 in_lan_cb = ttk.Combobox(window, textvariable=in_lan_var)
 in_lan_cb['values'] = lan
 out_lan_cb = ttk.Combobox(window, textvariable=out_lan_var)
@@ -80,6 +85,8 @@ in_lan_cb.config(width=4)
 out_lan_cb.config(width=4)
 translation_lb = Listbox(window, width=54)
 add_to_anki_btn = ttk.Button(window, text='Add to Anki', width=54)
+
+
 in_word_entry.grid(column=1, row=0, columnspan=2)
 in_lan_label.grid(column=1, row=1, sticky=W)
 out_lan_label.grid(column=1, row= 2, sticky=W)
@@ -87,6 +94,8 @@ in_lan_cb.grid(column=2, row=1, sticky=E)
 out_lan_cb.grid(column=2, row=2, sticky=E)
 translation_lb.grid(column=1, row=3, columnspan=2)
 add_to_anki_btn.grid(column=1, row=4, columnspan=2)
+
+#event binding
 add_to_anki_btn.bind('<Button-1>', make_cards)
 in_word_entry.bind('<Return>', run)
 window.mainloop()
